@@ -1,14 +1,17 @@
 package com.TechnoWebDistributed.tp1.model;
 import com.fasterxml.jackson.annotation.JsonBackReference;
 import jakarta.persistence.*;
-import lombok.Data;
-import lombok.EqualsAndHashCode;
-import lombok.ToString;
+import lombok.*;
+
+import java.util.UUID;
 
 @Entity
 @Data
 @Table(name = "book")
-public class Book {
+@AllArgsConstructor
+@NoArgsConstructor
+@Builder
+public class BookEntity {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
@@ -21,5 +24,5 @@ public class Book {
     @JsonBackReference
     @ToString.Exclude
     @EqualsAndHashCode.Exclude
-    private Student student;
+    private StudentEntity studentEntity;
 }

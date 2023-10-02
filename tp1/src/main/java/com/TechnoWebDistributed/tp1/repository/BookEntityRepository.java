@@ -1,15 +1,20 @@
 package com.TechnoWebDistributed.tp1.repository;
 
-import com.TechnoWebDistributed.tp1.model.Book;
+import com.TechnoWebDistributed.tp1.model.BookEntity;
 import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.stereotype.Repository;
+
 import java.util.List;
 import java.util.Optional;
 
-public interface BookEntityRepository extends JpaRepository<Book, Long> {
+@Repository
+public interface BookEntityRepository extends JpaRepository<BookEntity, Long> {
 
-    List<Book> findAll();
+    List<BookEntity> findAll();
 
-    Optional<Book> findByCode(String code);
+//    List<BookEntity> findById(List<Long> ids);
+
+    Optional<BookEntity> findByCode(String code);
 
 
 }

@@ -1,17 +1,21 @@
 package com.TechnoWebDistributed.tp1.repository;
 
-import com.TechnoWebDistributed.tp1.model.Student;
+import com.TechnoWebDistributed.tp1.model.StudentEntity;
 import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.stereotype.Repository;
+
 import java.util.List;
 import java.util.Optional;
+import java.util.UUID;
 
-public interface StudentEntityRepository extends JpaRepository<Student, Integer> {
-    List<Student> findAll();
-    Optional<Student> findById(Integer id);
-    Optional<Student> findByEmail(String email);
-    Optional<Student> findByFirstNameAndLastName(String firstName, String lastName);
+@Repository
+public interface StudentEntityRepository extends JpaRepository<StudentEntity, Integer> {
+    List<StudentEntity> findAll();
+    Optional<StudentEntity> findById(Long id);
+    Optional<StudentEntity> findByEmail(String email);
+    Optional<StudentEntity> findByFirstNameAndLastName(String firstName, String lastName);
 
-    List<Student> findByFirstName(String firstName);
+    List<StudentEntity> findByFirstName(String firstName);
 
-    List<Student> findByAgeGreaterThan(int i);
+    List<StudentEntity> findByAgeGreaterThan(int i);
 }
