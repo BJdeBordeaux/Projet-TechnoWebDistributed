@@ -3,12 +3,10 @@ package com.TechnoWebDistributed.tp1.controller;
 
 import com.TechnoWebDistributed.tp1.model.Book;
 import com.TechnoWebDistributed.tp1.model.Student;
-import com.TechnoWebDistributed.tp1.repository.BookEntityRepository;
 import com.TechnoWebDistributed.tp1.repository.StudentEntityRepository;
 import com.TechnoWebDistributed.tp1.service.BookService;
 import com.TechnoWebDistributed.tp1.service.StudentService;
 import lombok.AllArgsConstructor;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -73,9 +71,15 @@ public class StudentController {
     }
 
     // Supprimer un étudiant par son ID
-    @DeleteMapping
-    public void deleteStudent(@RequestBody Student student) {
-        studentEntityRepository.delete(student);
+    @DeleteMapping("/delete/{id}")
+    public ResponseEntity<Optional<Student>> deleteStudent(@PathVariable Integer id) {
+        Optional<Student> deletedStudent = studentService.delete(id);
+
+        if (studentService.getById(id).isEmpty()) {
+            return ResponseEntity.ok(deletedStudent);
+        } else {
+            return ResponseEntity.notFound().build();
+        }
     }
 
     //////////////////// BOOKS ////////////////////
@@ -85,7 +89,7 @@ public class StudentController {
         Optional<Student> studentOptional = studentEntityRepository.findById(studentId);
         if (studentOptional.isPresent()) {
             Student student = studentOptional.get();
-            bookService.updateStudentBooks(student, newBooks);
+            studentService.updateStudentBooks(student, newBooks);
             // sauvagarde de l'étudiant pour mettre à jour sa liste de livres dans la base de données
             studentEntityRepository.save(student);
             return ResponseEntity.ok("Student books updated successfully.");

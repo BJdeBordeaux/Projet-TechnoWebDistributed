@@ -1,5 +1,6 @@
 package com.TechnoWebDistributed.tp1.service;
 
+import com.TechnoWebDistributed.tp1.model.Book;
 import com.TechnoWebDistributed.tp1.model.Student;
 import com.TechnoWebDistributed.tp1.repository.StudentEntityRepository;
 import lombok.AllArgsConstructor;
@@ -16,6 +17,10 @@ public class StudentService {
 
     public List<Student> getAll() {
         return studentEntityRepository.findAll();
+    }
+
+    public Optional<Student> getById(Integer id) {
+        return studentEntityRepository.findById(id);
     }
 
     public Optional<Student> getByEmail(String email) {
@@ -52,8 +57,25 @@ public class StudentService {
         return studentEntityRepository.saveAll(students);
     }
 
-    public void delete(Student student) {
-        studentEntityRepository.delete(student);
+    public Optional<Student> delete(Integer studentId) {
+        Optional<Student> studentOptional = studentEntityRepository.findById(studentId);
+        studentOptional.ifPresent(studentEntityRepository::delete);
+        return studentOptional;
+    }
+
+    /////////////////////// BOOKS ///////////////////////
+    public void updateStudentBooks(Student student, List<Book> newBooks) {
+        // Si l'étudiant n'est pas null
+        // Alors, mettez à jour sa liste de livres avec la nouvelle liste de livres
+        if (student != null){
+            student.setBooks(newBooks);
+            // Sauvegarder l'étudiant pour mettre à jour sa liste de livres dans la base de données
+            // Cela sera écrit dans StudentService.java
+        }
+        // Si l'étudiant est null, throw une exception IllegalArgumentException
+        else{
+            throw new IllegalArgumentException("Student is null");
+        }
     }
 
 }
