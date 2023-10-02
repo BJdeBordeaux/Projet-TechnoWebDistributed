@@ -35,13 +35,4 @@ public class BookController {
         return ResponseEntity.status(HttpStatus.CREATED).body(savedBook);
     }
 
-    @PutMapping("/updateStudentBooks")
-    public ResponseEntity<String> updateStudentBooks(@RequestParam Long studentId, @RequestBody List<Book> newBooks) {
-        // Obtenez l'étudiant à partir de votre service StudentService (selon l'ID)
-
-        // Puis appelez bookService.updateStudentBooks(student, newBooks)
-        // Assurez-vous que l'étudiant existe en base de données avant d'appeler cette méthode.
-        // ...
-        return ResponseEntity.ok("Student books updated successfully.");
-    }
 }
