@@ -35,17 +35,4 @@ public class BookService {
         return bookRepository.save(book);
     }
 
-    public void updateStudentBooks(Student student, List<Book> newBooks) {
-        // Si l'étudiant n'est pas null
-        // Alors, mettez à jour sa liste de livres avec la nouvelle liste de livres
-        if (student != null){
-            student.setBooks(newBooks);
-            // Sauvegarder l'étudiant pour mettre à jour sa liste de livres dans la base de données
-            // Cela sera écrit dans StudentService.java
-        }
-        // Si l'étudiant est null, throw une exception IllegalArgumentException
-        else{
-            throw new IllegalArgumentException("Student is null");
-        }
-    }
 }
