@@ -12,7 +12,7 @@ public interface BookEntityRepository extends JpaRepository<BookEntity, Long> {
 
     List<BookEntity> findAll();
 
-//    List<BookEntity> findById(List<Long> ids);
+//    List<BookEntity> findById(List<UUID> ids);
 
     Optional<BookEntity> findByCode(String code);
 

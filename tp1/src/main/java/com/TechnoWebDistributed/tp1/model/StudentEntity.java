@@ -15,9 +15,10 @@ import java.util.UUID;
 @Builder
 public class StudentEntity {
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    // TODO: change id to UUID
+    @GeneratedValue(strategy = GenerationType.UUID)
     @Column(name = "id")
-    private Long id;
+    private UUID id;
 
     @Column(name = "firstName")
     private String firstName;

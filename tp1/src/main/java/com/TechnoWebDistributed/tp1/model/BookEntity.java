@@ -12,9 +12,11 @@ import java.util.UUID;
 @NoArgsConstructor
 @Builder
 public class BookEntity {
+
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long id;
+    @GeneratedValue(strategy = GenerationType.UUID)
+    @Column(name = "id")
+    private UUID id;
 
     private String code;
     private String name;

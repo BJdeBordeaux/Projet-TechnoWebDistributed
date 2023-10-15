@@ -1,8 +1,6 @@
 package com.TechnoWebDistributed.tp1.service.implementation;
 
-import com.TechnoWebDistributed.tp1.model.BookEntity;
 import com.TechnoWebDistributed.tp1.model.StudentEntity;
-import com.TechnoWebDistributed.tp1.repository.BookEntityRepository;
 import com.TechnoWebDistributed.tp1.repository.StudentEntityRepository;
 import com.TechnoWebDistributed.tp1.service.StudentService;
 import lombok.AllArgsConstructor;
@@ -22,7 +20,7 @@ public class StudentServiceImpl implements StudentService {
         return studentEntityRepository.findAll();
     }
 
-    public Optional<StudentEntity> getById(Long id) {
+    public Optional<StudentEntity> getById(UUID id) {
         return studentEntityRepository.findById(id);
     }
 
@@ -34,21 +32,27 @@ public class StudentServiceImpl implements StudentService {
         return studentEntityRepository.findByFirstName(firstName);
     }
 
-    public List<StudentEntity> getOlderThan20() {
-        return studentEntityRepository.findByAgeGreaterThan(20);
-    }
-//
-//    public StudentEntity createStudent(StudentEntity studentEntity) {
-//        StudentEntity studentEntity = new StudentEntity();
-//        return studentEntityRepository.save(studentEntity);
-//    }
-
-    public StudentEntity save(StudentEntity studentEntity) {
-        return studentEntityRepository.save(studentEntity);
+    public List<StudentEntity> getByLastName(String lastName) {
+        return studentEntityRepository.findByLastName(lastName);
     }
 
-    public StudentEntity updateEmail(Integer id, String newEmail) {
+    public List<StudentEntity> getYoungerThan30() {
+        return studentEntityRepository.findByAgeLessThan(30);
+    }
+
+    public Optional<StudentEntity> createStudent(StudentEntity studentEntity) {
+        return Optional.of(studentEntityRepository.save(studentEntity));
+    }
+
+    public StudentEntity updateEmailById(UUID id, String newEmail) {
         Optional<StudentEntity> studentOptional = studentEntityRepository.findById(id);
+        studentOptional.ifPresent(student -> student.setEmail(newEmail));
+        return studentEntityRepository.save(studentOptional.orElse(null));
+    }
+
+    // TODO : finish it
+    public StudentEntity updateEmailByOldEmail(String oldEmail, String newEmail) {
+        Optional<StudentEntity> studentOptional = studentEntityRepository.findByEmail(oldEmail);
         studentOptional.ifPresent(student -> student.setEmail(newEmail));
         return studentEntityRepository.save(studentOptional.orElse(null));
     }
@@ -65,7 +69,7 @@ public class StudentServiceImpl implements StudentService {
         return studentEntityRepository.saveAll(studentEntities);
     }
 
-    public Optional<StudentEntity> delete(Long studentId) {
+    public Optional<StudentEntity> delete(UUID studentId) {
         Optional<StudentEntity> studentOptional = studentEntityRepository.findById(studentId);
         studentOptional.ifPresent(studentEntityRepository::delete);
         return studentOptional;

@@ -9,8 +9,10 @@ import java.util.UUID;
 public interface StudentService {
     public List<StudentEntity> getAll();
 
-    public Optional<StudentEntity> getById(Long id);
+    public Optional<StudentEntity> getById(UUID id);
 
-    public Optional<StudentEntity> delete(Long studentId);
+    public Optional<StudentEntity> createStudent(StudentEntity studentEntity);
+
+    public Optional<StudentEntity> delete(UUID studentId);
 
 }

@@ -19,7 +19,6 @@ import java.util.UUID;
 @RequestMapping("/students")
 public class StudentController {
 
-    private final StudentEntityRepository studentEntityRepository;
     private final StudentServiceImpl studentServiceImpl;
     private final BookService bookService;
 
@@ -41,28 +40,29 @@ public class StudentController {
         return studentServiceImpl.getByFirstName(firstName);
     }
 
-    // Récupérer tous les étudiants plus âgés que 20 ans
-    @GetMapping("/olderThan20")
-    public List<StudentEntity> getStudentsOlderThan20() {
-        return studentServiceImpl.getOlderThan20();
+    @GetMapping("/byLastName/{lastName}")
+    public List<StudentEntity> getStudentsByLastName(@PathVariable String lastName) {
+        return studentServiceImpl.getByLastName(lastName);
+    }
+
+    // Récupérer tous les étudiants moins âgés que 30 ans
+    @GetMapping("/youngerThan30")
+    public List<StudentEntity> getStudentsYoungerThan30() {
+        return studentServiceImpl.getYoungerThan30();
     }
 
     // Sauvegarder un nouvel étudiant
+    // TODO: finish it. Look how to build a StudentEntity object by @RequestBody
     @PostMapping(path = "/create", consumes = "application/json")
     public StudentEntity saveStudent(@RequestBody StudentEntity studentEntity) {
-        return studentEntityRepository.save(studentEntity);
+        StudentEntity.builder().firstName();
+        return studentServiceImpl.createStudent(studentEntity);
     }
 
-    // Modifier l'email d'un étudiant par son ID
-    @PutMapping("/{id}/email")
-    public StudentEntity updateStudentEmail(@PathVariable Integer id, @RequestParam String newEmail) {
-        return studentServiceImpl.updateEmail(id, newEmail);
-    }
-
-    // Modifier le nom de famille d'un étudiant par son email
-    @PutMapping("/{email}/lastname")
-    public StudentEntity updateStudentLastName(@PathVariable String email, @RequestParam String newLastName) {
-        return studentServiceImpl.updateLastName(email, newLastName);
+    // Modifier l'email d'un étudiant par son ancienne adresse email
+    @PutMapping("/email/update")
+    public StudentEntity updateStudentEmail(@RequestParam String oldEmail, @RequestParam String newEmail) {
+        return studentServiceImpl.updateEmailByOldEmail(oldEmail, newEmail);
     }
 
     // Modifier l'âge de tous les étudiants (incrémenter de 1)
@@ -73,7 +73,7 @@ public class StudentController {
 
     // Supprimer un étudiant par son ID
     @DeleteMapping("/delete/{id}")
-    public ResponseEntity<Optional<StudentEntity>> deleteStudent(@PathVariable Long id) {
+    public ResponseEntity<Optional<StudentEntity>> deleteStudent(@PathVariable UUID id) {
         Optional<StudentEntity> deletedStudent = studentServiceImpl.delete(id);
 
         if (studentServiceImpl.getById(id).isEmpty()) {

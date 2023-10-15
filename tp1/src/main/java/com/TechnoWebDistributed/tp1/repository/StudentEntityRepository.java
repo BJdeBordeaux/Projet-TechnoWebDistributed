@@ -11,11 +11,17 @@ import java.util.UUID;
 @Repository
 public interface StudentEntityRepository extends JpaRepository<StudentEntity, Integer> {
     List<StudentEntity> findAll();
-    Optional<StudentEntity> findById(Long id);
+    Optional<StudentEntity> findById(UUID id);
     Optional<StudentEntity> findByEmail(String email);
-    Optional<StudentEntity> findByFirstNameAndLastName(String firstName, String lastName);
 
     List<StudentEntity> findByFirstName(String firstName);
 
+    List<StudentEntity> findByLastName(String lastName);
+
+    Optional<StudentEntity> findByFirstNameAndLastName(String firstName, String lastName);
+
     List<StudentEntity> findByAgeGreaterThan(int i);
+
+    List<StudentEntity> findByAgeLessThan(int i);
+
 }
