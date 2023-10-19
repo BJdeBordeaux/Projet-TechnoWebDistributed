@@ -1,5 +1,6 @@
 package com.TechnoWebDistributed.tp1.model;
 
+import com.TechnoWebDistributed.tp1.domain.Book;
 import com.fasterxml.jackson.annotation.JsonManagedReference;
 import jakarta.persistence.*;
 import lombok.*;
@@ -15,7 +16,6 @@ import java.util.UUID;
 @Builder
 public class StudentEntity {
     @Id
-    // TODO: change id to UUID
     @GeneratedValue(strategy = GenerationType.UUID)
     @Column(name = "id")
     private UUID id;

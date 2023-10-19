@@ -1,6 +1,7 @@
 package com.TechnoWebDistributed.tp1.repository;
 
 import com.TechnoWebDistributed.tp1.model.StudentEntity;
+import jakarta.persistence.Table;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 
@@ -9,6 +10,7 @@ import java.util.Optional;
 import java.util.UUID;
 
 @Repository
+@Table(name = "student")
 public interface StudentEntityRepository extends JpaRepository<StudentEntity, Integer> {
     List<StudentEntity> findAll();
     Optional<StudentEntity> findById(UUID id);

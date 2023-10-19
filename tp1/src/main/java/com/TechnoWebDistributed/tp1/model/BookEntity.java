@@ -1,4 +1,5 @@
 package com.TechnoWebDistributed.tp1.model;
+
 import com.fasterxml.jackson.annotation.JsonBackReference;
 import jakarta.persistence.*;
 import lombok.*;
@@ -21,7 +22,7 @@ public class BookEntity {
     private String code;
     private String name;
 
-    @ManyToOne
+    @ManyToOne()
     @JoinColumn(name = "student_id")
     @JsonBackReference
     @ToString.Exclude

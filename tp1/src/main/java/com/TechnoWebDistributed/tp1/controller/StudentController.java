@@ -1,16 +1,15 @@
 package com.TechnoWebDistributed.tp1.controller;
 
 
-import com.TechnoWebDistributed.tp1.model.BookEntity;
 import com.TechnoWebDistributed.tp1.model.StudentEntity;
-import com.TechnoWebDistributed.tp1.repository.StudentEntityRepository;
-import com.TechnoWebDistributed.tp1.service.implementation.BookService;
+import com.TechnoWebDistributed.tp1.service.implementation.BookServiceImpl;
 import com.TechnoWebDistributed.tp1.service.implementation.StudentServiceImpl;
 import lombok.AllArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
 import java.util.UUID;
 
@@ -20,7 +19,7 @@ import java.util.UUID;
 public class StudentController {
 
     private final StudentServiceImpl studentServiceImpl;
-    private final BookService bookService;
+    private final BookServiceImpl bookServiceImpl;
 
     // Récupérer tous les étudiants de la base de données
     @GetMapping
@@ -52,11 +51,15 @@ public class StudentController {
     }
 
     // Sauvegarder un nouvel étudiant
-    // TODO: finish it. Look how to build a StudentEntity object by @RequestBody
     @PostMapping(path = "/create", consumes = "application/json")
-    public StudentEntity saveStudent(@RequestBody StudentEntity studentEntity) {
-        StudentEntity.builder().firstName();
-        return studentServiceImpl.createStudent(studentEntity);
+    public StudentEntity saveStudent(@RequestBody StudentEntity requestBody) {
+        StudentEntity student = StudentEntity.builder()
+                .firstName(requestBody.getFirstName())
+                .lastName(requestBody.getLastName())
+                .email(requestBody.getEmail())
+                .age(requestBody.getAge())
+                .build();
+        return studentServiceImpl.createStudent(student).orElse(null);
     }
 
     // Modifier l'email d'un étudiant par son ancienne adresse email
@@ -87,13 +90,13 @@ public class StudentController {
 
     @PutMapping("/{studentId}/updateBooks")
     public ResponseEntity<String> updateStudentBooks(@PathVariable Integer studentId, @RequestBody List<Long> newBookIds) {
-        Optional<StudentEntity> studentOptional = studentEntityRepository.findById(studentId);
+        Optional<StudentEntity> studentOptional = studentServiceImpl.getById(UUID.fromString(String.valueOf(studentId)));
         if (studentOptional.isPresent()) {
             StudentEntity studentEntity = studentOptional.get();
             // TODO: finish
             studentServiceImpl.updateStudentBooks(studentEntity, newBookIds);
             // sauvagarde de l'étudiant pour mettre à jour sa liste de livres dans la base de données
-            studentEntityRepository.save(studentEntity);
+            studentServiceImpl.createStudent(studentEntity);
             return ResponseEntity.ok("Student books updated successfully.");
         } else {
             return ResponseEntity.notFound().build();
