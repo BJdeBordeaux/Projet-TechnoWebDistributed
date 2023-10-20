@@ -8,10 +8,7 @@ import lombok.AllArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.List;
-import java.util.Map;
-import java.util.Optional;
-import java.util.UUID;
+import java.util.*;
 
 @RestController
 @AllArgsConstructor
@@ -23,55 +20,88 @@ public class StudentController {
 
     // Récupérer tous les étudiants de la base de données
     @GetMapping
-    public List<StudentEntity> getAllStudents() {
-        return studentServiceImpl.getAll();
+    public ResponseEntity<List<StudentEntity>> getAllStudents() {
+        List<StudentEntity> students = studentServiceImpl.getAll();
+        if (students.isEmpty()) {
+            return ResponseEntity.notFound().build();
+        } else {
+            return ResponseEntity.ok(students);
+        }
     }
 
     // Récupérer un étudiant par son email
     @GetMapping("/{email}")
-    public Optional<StudentEntity> getStudentByEmail(@PathVariable String email) {
-        return studentServiceImpl.getByEmail(email);
+    public ResponseEntity<Optional<StudentEntity>> getStudentByEmail(@PathVariable String email) {
+        Optional<StudentEntity> student = studentServiceImpl.getByEmail(email);
+        if (student.isPresent()) {
+            return ResponseEntity.ok(student);
+        } else {
+            return ResponseEntity.notFound().build();
+        }
     }
 
     // Récupérer tous les étudiants par leur prénom
     @GetMapping("/byFirstName/{firstName}")
-    public List<StudentEntity> getStudentsByFirstName(@PathVariable String firstName) {
-        return studentServiceImpl.getByFirstName(firstName);
+    public ResponseEntity<List<StudentEntity>> getStudentsByFirstName(@PathVariable String firstName) {
+        List<StudentEntity> students = studentServiceImpl.getByFirstName(firstName);
+        if (students.isEmpty()) {
+            return ResponseEntity.notFound().build();
+        } else {
+            return ResponseEntity.ok(students);
+        }
     }
 
     @GetMapping("/byLastName/{lastName}")
-    public List<StudentEntity> getStudentsByLastName(@PathVariable String lastName) {
-        return studentServiceImpl.getByLastName(lastName);
+    public ResponseEntity<List<StudentEntity>> getStudentsByLastName(@PathVariable String lastName) {
+        List<StudentEntity> students = studentServiceImpl.getByLastName(lastName);
+        if (students.isEmpty()) {
+            return ResponseEntity.notFound().build();
+        } else {
+            return ResponseEntity.ok(students);
+        }
     }
 
     // Récupérer tous les étudiants moins âgés que 30 ans
     @GetMapping("/youngerThan30")
-    public List<StudentEntity> getStudentsYoungerThan30() {
-        return studentServiceImpl.getYoungerThan30();
+    public ResponseEntity<Optional<StudentEntity>> getStudentsYoungerThan30() {
+        List<StudentEntity> youngerThan30 = studentServiceImpl.getYoungerThan30();
+        if (youngerThan30.isEmpty()) {
+            return ResponseEntity.notFound().build();
+        } else {
+            return ResponseEntity.ok(studentServiceImpl.getYoungerThan30().stream().findFirst());
+        }
     }
 
     // Sauvegarder un nouvel étudiant
     @PostMapping(path = "/create", consumes = "application/json")
-    public StudentEntity saveStudent(@RequestBody StudentEntity requestBody) {
+    public ResponseEntity<Optional<StudentEntity>> saveStudent(@RequestBody StudentEntity requestBody) {
         StudentEntity student = StudentEntity.builder()
                 .firstName(requestBody.getFirstName())
                 .lastName(requestBody.getLastName())
                 .email(requestBody.getEmail())
                 .age(requestBody.getAge())
                 .build();
-        return studentServiceImpl.createStudent(student).orElse(null);
+        Optional<StudentEntity> savedStudent = studentServiceImpl.createStudent(student);
+        if (savedStudent.isPresent()) {
+            return ResponseEntity.ok(savedStudent);
+        }
+        return ResponseEntity.notFound().build();
     }
 
     // Modifier l'email d'un étudiant par son ancienne adresse email
     @PutMapping("/email/update")
-    public StudentEntity updateStudentEmail(@RequestParam String oldEmail, @RequestParam String newEmail) {
-        return studentServiceImpl.updateEmailByOldEmail(oldEmail, newEmail);
+    public ResponseEntity<String> updateStudentEmail(@RequestParam String oldEmail, @RequestParam String newEmail) {
+        Optional<StudentEntity> studentEntityResult = studentServiceImpl.updateEmailByOldEmail(oldEmail, newEmail);
+        return studentEntityResult.map(studentEntity -> ResponseEntity.ok("The mail has been successfully updated to " + studentEntity.getEmail() + ".")).orElseGet(() -> ResponseEntity.notFound().build());
     }
 
     // Modifier l'âge de tous les étudiants (incrémenter de 1)
     @PutMapping("/incrementAge")
-    public List<StudentEntity> incrementAgeOfAllStudents() {
-        return studentServiceImpl.incrementAge();
+    public ResponseEntity<String> incrementAgeOfAllStudents() {
+        if (studentServiceImpl.incrementAge()) {
+            return ResponseEntity.ok("Students' age incremented successfully.");
+        }
+        return null;
     }
 
     // Supprimer un étudiant par son ID
@@ -89,15 +119,22 @@ public class StudentController {
     //////////////////// BOOKS ////////////////////
 
     @PutMapping("/{studentId}/updateBooks")
-    public ResponseEntity<String> updateStudentBooks(@PathVariable Integer studentId, @RequestBody List<Long> newBookIds) {
+    public ResponseEntity<String> updateStudentBooks(@PathVariable Integer studentId, @RequestBody Collection<UUID> newBookIds) {
         Optional<StudentEntity> studentOptional = studentServiceImpl.getById(UUID.fromString(String.valueOf(studentId)));
         if (studentOptional.isPresent()) {
             StudentEntity studentEntity = studentOptional.get();
-            // TODO: finish
-            studentServiceImpl.updateStudentBooks(studentEntity, newBookIds);
-            // sauvagarde de l'étudiant pour mettre à jour sa liste de livres dans la base de données
-            studentServiceImpl.createStudent(studentEntity);
-            return ResponseEntity.ok("Student books updated successfully.");
+            try {
+                Boolean result = studentServiceImpl.updateStudentBooks(studentEntity, newBookIds);
+                if (!result) {
+                    return ResponseEntity.badRequest().body("Error while updating student books.");
+                }
+                return ResponseEntity.ok("Student books updated successfully.");
+            } catch (IllegalArgumentException e) {
+                return ResponseEntity.badRequest().body(
+                        "Error while updating student books."
+                        + "\n" + e.getMessage()
+                );
+            }
         } else {
             return ResponseEntity.notFound().build();
         }
