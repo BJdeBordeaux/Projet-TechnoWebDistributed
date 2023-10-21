@@ -8,7 +8,6 @@ import com.TechnoWebDistributed.tp1.service.StudentService;
 import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Service;
 
-import javax.swing.text.html.Option;
 import java.util.Collection;
 import java.util.List;
 import java.util.Optional;
@@ -87,21 +86,33 @@ public class StudentServiceImpl implements StudentService {
     }
 
     /////////////////////// BOOKS ///////////////////////
-    public Boolean updateStudentBooks(StudentEntity studentEntity, Collection<UUID> newBookIds) {
+    public StudentEntity updateStudentBooks(StudentEntity studentEntity, Collection<UUID> newBookIds) {
         // Si l'étudiant n'est pas null
         // Alors, mettez à jour sa liste de livres avec la nouvelle liste de livres
         if (studentEntity != null && newBookIds != null && !newBookIds.isEmpty()){
             // Trouver les livres avec ces IDs
-            List<BookEntity> allBooks = bookEntityRepository.findAll(newBookIds);
+            List<BookEntity> allBooks = bookEntityRepository.findByIdIn(newBookIds);
             // Si aucun livre n'est trouvé, throw une exception IllegalArgumentException
             if (allBooks == null || allBooks.isEmpty()){
                 throw new IllegalArgumentException("No book found with these IDs");
             }
 
+            // Supprimer les anciens livres de l'étudiant
+            studentEntity.getBookEntities().forEach(bookEntity -> {
+                bookEntity.setStudentEntity(null);
+                bookEntityRepository.save(bookEntity);
+            });
+
+            // Mettre à jour l'appartenance des livres
+            allBooks.forEach(bookEntity -> {
+                bookEntity.setStudentEntity(studentEntity);
+                bookEntityRepository.save(bookEntity);
+            });
+
             // Sauvegarder l'étudiant pour mettre à jour sa liste de livres dans la base de données
             studentEntity.setBookEntities(allBooks);
             studentEntityRepository.save(studentEntity);
-            return true;
+            return studentEntity;
         }
         // Si l'étudiant est null, throw une exception IllegalArgumentException
         else if (studentEntity == null){

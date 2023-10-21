@@ -119,16 +119,18 @@ public class StudentController {
     //////////////////// BOOKS ////////////////////
 
     @PutMapping("/{studentId}/updateBooks")
-    public ResponseEntity<String> updateStudentBooks(@PathVariable Integer studentId, @RequestBody Collection<UUID> newBookIds) {
-        Optional<StudentEntity> studentOptional = studentServiceImpl.getById(UUID.fromString(String.valueOf(studentId)));
+    public ResponseEntity<String> updateStudentBooks(@PathVariable UUID studentId, @RequestBody Collection<UUID> newBookIds) {
+        Optional<StudentEntity> studentOptional = studentServiceImpl.getById(studentId);
         if (studentOptional.isPresent()) {
             StudentEntity studentEntity = studentOptional.get();
             try {
-                Boolean result = studentServiceImpl.updateStudentBooks(studentEntity, newBookIds);
-                if (!result) {
+                StudentEntity result = studentServiceImpl.updateStudentBooks(studentEntity, newBookIds);
+                if (result == null) {
                     return ResponseEntity.badRequest().body("Error while updating student books.");
                 }
-                return ResponseEntity.ok("Student books updated successfully.");
+
+//                return ResponseEntity.ok().body(result.toString());
+                return ResponseEntity.ok().body(bookServiceImpl.getByIdIn(newBookIds).toString());
             } catch (IllegalArgumentException e) {
                 return ResponseEntity.badRequest().body(
                         "Error while updating student books."
