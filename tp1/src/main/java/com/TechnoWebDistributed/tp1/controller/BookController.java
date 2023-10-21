@@ -30,6 +30,13 @@ public class BookController {
         return book.map(ResponseEntity::ok).orElseGet(() -> ResponseEntity.notFound().build());
     }
 
+    // get books by ids
+    @GetMapping("/ids")
+    public ResponseEntity<List<BookEntity>> getBooksByIds(@RequestParam List<UUID> ids) {
+        List<BookEntity> books = bookServiceImpl.getByIdIn(ids);
+        return books.isEmpty() ? ResponseEntity.notFound().build() : ResponseEntity.ok(books);
+    }
+
     @GetMapping("/code/{code}")
     public ResponseEntity<BookEntity> getBookByCode(@PathVariable String code) {
         Optional<BookEntity> book = bookServiceImpl.getByCode(code);

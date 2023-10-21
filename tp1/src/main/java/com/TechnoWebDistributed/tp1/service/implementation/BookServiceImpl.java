@@ -6,6 +6,7 @@ import com.TechnoWebDistributed.tp1.service.BookService;
 import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Service;
 
+import java.util.Collection;
 import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
@@ -22,6 +23,10 @@ public class BookServiceImpl implements BookService {
 
     public Optional<BookEntity> getById(UUID id) {
         return bookEntityRepository.findById(id);
+    }
+
+    public List<BookEntity> getByIdIn(Collection<UUID> ids) {
+        return bookEntityRepository.findByIdIn(ids);
     }
 
     public Optional<BookEntity> createBook(BookEntity bookEntity) {
