@@ -19,7 +19,7 @@ export class StudentService {
   public save(student: Student) {
     const headers = { 'content-type': 'application/json'};
 
-    return this.http.post<Student>(this.studentURL, student, this.option);
+    return this.http.post<Student>(this.studentURL+'/create', student, this.option);
   }
 
   private get httpHeaders(): HttpHeaders {
