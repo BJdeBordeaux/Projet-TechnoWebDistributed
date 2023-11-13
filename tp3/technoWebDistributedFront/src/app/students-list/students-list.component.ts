@@ -1,6 +1,6 @@
 import {Component, OnInit} from '@angular/core';
 import { CommonModule } from '@angular/common';
-import {Student} from "../Model/Student";
+import {Student} from "../model/student";
 import {HttpClient} from "@angular/common/http";
 import {Observable} from "rxjs";
 
