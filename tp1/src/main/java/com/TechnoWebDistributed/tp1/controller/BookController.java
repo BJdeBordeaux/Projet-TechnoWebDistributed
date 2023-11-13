@@ -14,7 +14,7 @@ import java.util.UUID;
 @RestController
 @RequestMapping("/books")
 @AllArgsConstructor
-@CrossOrigin(origins = "http://localhost:4200")
+@CrossOrigin(origins = {"http://localhost:4200"})
 public class BookController {
 
     private final BookServiceImpl bookServiceImpl;
