@@ -1,7 +1,15 @@
 export class Student {
-  id: string;
-  age: number;
-  firstName: string;
-  lastName: string;
-  email: string;
+  constructor(
+    public id: string,
+    public age: number,
+    public firstName: string,
+    public lastName: string,
+    public email: string
+  ) {
+    this.id = id;
+    this.age = age;
+    this.firstName = firstName;
+    this.lastName = lastName;
+    this.email = email;
+  }
 }
