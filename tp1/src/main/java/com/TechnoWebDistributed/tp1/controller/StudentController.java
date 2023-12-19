@@ -13,6 +13,7 @@ import java.util.*;
 @RestController
 @AllArgsConstructor
 @RequestMapping("/students")
+@CrossOrigin(origins = {"http://localhost:4200"})
 public class StudentController {
 
     private final StudentServiceImpl studentServiceImpl;
