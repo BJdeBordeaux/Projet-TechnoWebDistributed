@@ -8,6 +8,7 @@ import java.util.UUID;
 
 public interface StudentService {
     public List<StudentEntity> getAll();
+    // nothing
 
     public Optional<StudentEntity> getById(UUID id);
 
